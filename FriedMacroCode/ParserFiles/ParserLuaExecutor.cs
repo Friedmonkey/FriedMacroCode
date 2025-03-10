@@ -4,7 +4,7 @@ namespace FriedMacroCode.ParserFiles;
 
 public partial class Parser
 {
-    const string CurrentFile = "_currentFile";
+    //const string CurrentFile = "_currentFile";
     const string CurrentBuffer = "_currentBuffer";
     const string RawValues = "_rawValues";
     const string Interop = "_luaInterop";
@@ -25,7 +25,7 @@ public partial class Parser
                 lua.DoString("import = function () end");
                 // Initialize Lua variables
                 lua[CurrentBuffer] = string.Empty;
-                lua[CurrentFile] = string.Empty;
+                //lua[CurrentFile] = string.Empty;
 
                 // Convert the C# List to a Lua table
                 lua.NewTable(RawValues);

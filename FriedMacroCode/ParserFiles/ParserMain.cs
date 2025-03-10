@@ -12,9 +12,12 @@ public partial class Parser : AnalizerBase<FToken<Token>>
         FToken<Token>.CurrentOriginContext = fullPath;
     }
     public string GetOrginContext() => FToken<Token>.CurrentOriginContext;
+    private static Dictionary<string, string[]> inputCache = new();
     public Parser(ParserOptions options) : base(new FToken<Token>(Token.EOF))
     {
         SetOrginContext(options.Origin);
+        inputCache.Add(GetOrginContext(), options.Text.Split('\n').ToArray());
+
         logger = options.Logger;
         FLexer<Token> tokenizer = new FLexer<Token>(options.Text, Token.BadToken, Token.EOF);
         tokenizer.DefinedTokens = new Dictionary<string, Token>
@@ -41,7 +44,7 @@ public partial class Parser : AnalizerBase<FToken<Token>>
 
         var macroXMLToken = new XMLToken("macro", Token.XMLMacro);
         var luaXMLToken = new XMLToken("lua", Token.XMLCodeLua);
-        var embedXMLToken = new XMLToken("raw", Token.XMLEmbed);
+        var embedXMLToken = new XMLToken("raw", Token.XMLRaw);
 
         tokenizer.AddLogicalToken<EmbedToken>();
         tokenizer.AddLogicalToken(macroXMLToken);

@@ -80,6 +80,7 @@ public class XMLToken : LogicalToken<Token>
             rawValue += Current;
             Position++;
         }
+        Position += End.Length - 1;
         rawValue += End;
         return new FToken<Token>(token, startPos, str, rawValue);
     }

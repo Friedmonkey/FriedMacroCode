@@ -17,17 +17,18 @@ public partial class Parser
                 {
                     case "include": ParseInclude(); break;
                     case "define": ParseDefine(); break;
-                    default: throw new InvalidOperationException($"Unhandled keyword {keyword}");
+                    default: throw newException($"Unhandled keyword {keyword}", Peek(-1));
                 }
             }
             if (Current.Type == Token.ApeTail)
-            { 
+            {
                 //macro expand!
+                ParseExpandMacro();
             }
-            if (Current.Type == Token.Embed)
+            if (Current.Type == Token.Embed || Current.Type == Token.XMLRaw)
             {
                 if (Current.Value is null)
-                    throw new Exception("Embed has no value!");
+                    throw newException("Embed has no value!");
                 rawValues.Add((string)Current.Value);
                 finalText += $"{CurrentBuffer} = {CurrentBuffer} .. {RawValues}[{rawValues.Count()}]\n";
             }
@@ -80,14 +81,14 @@ public partial class Parser
     {
         var token = Consume(type);
         if (token.Value is null)
-            throw new Exception("value was null?");
+            throw newException("value was null?", token);
         return ((string)token.Value);
     }
     private FToken<Token> Consume(Token type, string extraInfo = "")
     {
         if (Current.Type != type)
         {
-            throw new Exception($"Expected a {type} but got {Current.Type} instead!"+extraInfo);
+            throw newException($"Expected a {type} but got {Current.Type} instead! "+extraInfo);
         }
         else
         {

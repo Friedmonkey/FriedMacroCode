@@ -1,12 +1,18 @@
-﻿namespace FriedMacroCode.ParserFiles;
+﻿using FriedLexer;
+
+namespace FriedMacroCode.ParserFiles;
 
 public partial class Parser
 {
+    public record Macro(string name, List<string> args, FToken<Token> macroBody);
+    List<Macro> Macros = new List<Macro>();
     public void ParseDefine()
     {
         string defineName = GetIdentifier();
         List<string> parameters = new List<string>();
-        if (Current.Type == Token.lPar) //it has body
+        FToken<Token> macroBody = new FToken<Token>(Token.BadToken);
+
+        if (Current.Type == Token.lPar) //it has parameters
         {
             Position++;
             while (Safe && Current.Type != Token.rPar)
@@ -23,7 +29,16 @@ public partial class Parser
                 }
             }
             Consume(Token.rPar);
-            //Consume();
+
+            if (Current.Type == Token.XMLCodeLua)
+                macroBody = Consume(Token.XMLCodeLua);
+            else
+                macroBody = Consume(Token.XMLMacro);
         }
+        else
+        {
+            macroBody = Current;
+        }
+        Macros.Add(new Macro(defineName, parameters, macroBody));
     }
 }
