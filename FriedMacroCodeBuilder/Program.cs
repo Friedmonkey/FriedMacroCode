@@ -1,5 +1,5 @@
 ﻿using FriedMacroCode;
-using FriedMacroCode.Parser;
+using FriedMacroCode.ParserFiles;
 
 namespace FriedMacroCodeBuilder;
 
@@ -22,6 +22,8 @@ internal class Program
         ParserOptions options = new ParserOptions() 
         {
             Text = text,
+            Origin = filename,
+            ShowTokens = true,
             Logger = null //not yet made
         };
         Parser parser = new Parser(options);

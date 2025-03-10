@@ -1,10 +1,10 @@
 ﻿using FriedLexer;
 
-namespace FriedMacroCode.Parser;
+namespace FriedMacroCode.ParserFiles;
 
 public partial class Parser
 {
-    public string ParseText()
+    public string ParseText(ref List<string> rawValues)
     {
         string finalText = string.Empty;
         while (Safe)
@@ -13,12 +13,23 @@ public partial class Parser
             {
                 Position++;
                 string keyword = GetKeyword();
+                switch (keyword)
+                {
+                    case "include": ParseInclude(); break;
+                    case "define": ParseDefine(); break;
+                    default: throw new InvalidOperationException($"Unhandled keyword {keyword}");
+                }
+            }
+            if (Current.Type == Token.ApeTail)
+            { 
+                //macro expand!
             }
             if (Current.Type == Token.Embed)
             {
                 if (Current.Value is null)
                     throw new Exception("Embed has no value!");
-                finalText += (string)Current.Value;
+                rawValues.Add((string)Current.Value);
+                finalText += $"{CurrentBuffer} = {CurrentBuffer} .. {RawValues}[{rawValues.Count()}]\n";
             }
             ///switch (Current.Type)
             ///{
@@ -55,18 +66,28 @@ public partial class Parser
         }
         return finalText;
     }
-    private string GetKeyword()
+    private string GetKeyword() => StringValue(Token.Keyword).ToLower();
+    private string GetIdentifier() => StringValue(Token.Identifier);
+    private string GetString() => StringValue(Token.String);
+
+    //{
+    //    var keyword = Consume(Token.Keyword);
+    //    if (keyword.Value is null)
+    //        throw new Exception("value of keyword was null?");
+    //    return ((string)keyword.Value).ToLower();
+    //}
+    private string StringValue(Token type)
     {
-        var keyword = Consume(Token.Keyword);
-        if (keyword.Value is null)
-            throw new Exception("value of keyword was null?");
-        return ((string)keyword.Value).ToLower();
+        var token = Consume(type);
+        if (token.Value is null)
+            throw new Exception("value was null?");
+        return ((string)token.Value);
     }
-    private FToken<Token> Consume(Token type)
+    private FToken<Token> Consume(Token type, string extraInfo = "")
     {
         if (Current.Type != type)
         {
-            throw new Exception($"Expected a {type} but got {Current.Type} instead!");
+            throw new Exception($"Expected a {type} but got {Current.Type} instead!"+extraInfo);
         }
         else
         {

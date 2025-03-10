@@ -6,12 +6,16 @@ public enum Token
     ApeTail,                    //  @
     lPar,                       //  (
     rPar,                       //  )
-    lBrace,                     //  {
-    rBrace,                     //  }
+    Percentage,                 //  %
+    Comma,                      //  ,
 
 
     String,                     // "anything here"
     Embed,                      // #anything here
+
+    XMLMacro,                   // <macro>any macro text here</macro>
+    XMLCodeLua,                 // <lua>any lua code here</lua>
+    XMLEmbed,                   // <raw>anything here</raw>
 
     Comment,                    // //comment or /* comment */
     Keyword,                    // var if else ( as long as its in list)
