@@ -2,7 +2,7 @@
 
 namespace FriedMacroCode;
 
-public class EmbedLogicalToken : LogicalToken<Token>
+public class EmbedToken : LogicalToken<Token>
 {
     string rawValue = string.Empty;
     public override bool IfMatch()

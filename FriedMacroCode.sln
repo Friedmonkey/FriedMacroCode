@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FriedMacroCode", "FriedMacr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FriedMacroCodeBuilder", "FriedMacroCodeBuilder\FriedMacroCodeBuilder.csproj", "{692024CE-3B20-471D-B007-9CE7ED6A951F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FriedLexer", "..\FriedLexer\FriedLexer\FriedLexer.csproj", "{B835D689-EE88-436F-B077-B823EB9E40DC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{692024CE-3B20-471D-B007-9CE7ED6A951F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{692024CE-3B20-471D-B007-9CE7ED6A951F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{692024CE-3B20-471D-B007-9CE7ED6A951F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B835D689-EE88-436F-B077-B823EB9E40DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B835D689-EE88-436F-B077-B823EB9E40DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B835D689-EE88-436F-B077-B823EB9E40DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B835D689-EE88-436F-B077-B823EB9E40DC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

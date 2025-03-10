@@ -1,4 +1,5 @@
 ﻿using FriedMacroCode;
+using FriedMacroCode.Parser;
 
 namespace FriedMacroCodeBuilder;
 
@@ -6,8 +7,12 @@ internal class Program
 {
     static void Main(string[] args)
     {
-        Console.WriteLine("Enter file name \n>");
+#if DEBUG
+        string filename = "datapack\\main.fmc";
+#else
+        Console.Write("Enter file name \n>");
         string filename = Console.ReadLine();
+#endif
         //string filename = args[0];
 
         if (!File.Exists(filename))
@@ -20,5 +25,6 @@ internal class Program
             Logger = null //not yet made
         };
         Parser parser = new Parser(options);
+        parser.Parse();
     }
 }

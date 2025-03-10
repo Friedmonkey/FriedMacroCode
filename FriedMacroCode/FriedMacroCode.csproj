@@ -10,4 +10,8 @@
     <PackageReference Include="NLua" Version="1.7.4" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\FriedLexer\FriedLexer\FriedLexer.csproj" />
+  </ItemGroup>
+
 </Project>

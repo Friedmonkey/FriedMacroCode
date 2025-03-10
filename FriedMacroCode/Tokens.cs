@@ -2,11 +2,14 @@
 
 public enum Token
 {
+    Bang,                       //  !
     ApeTail,                    //  @
     lPar,                       //  (
     rPar,                       //  )
     lBrace,                     //  {
     rBrace,                     //  }
+
+
     String,                     // "anything here"
     Embed,                      // #anything here
 
