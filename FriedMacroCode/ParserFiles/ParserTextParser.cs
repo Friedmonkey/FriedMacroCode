@@ -16,54 +16,54 @@ public partial class Parser
                 switch (keyword)
                 {
                     case "include": ParseInclude(); break;
-                    case "define": ParseDefine(); break;
+                    case "try_define":
+                        {
+                            string defineName = GetIdentifier();
+                            var macro = ParseDefine(defineName);
+                            if (!TryGetMacro(defineName, out _))
+                                Macros.Add(macro);
+                        }
+                        break;
+                    case "define":
+                        {
+                            string defineName = GetIdentifier();
+                            Macros.Add(ParseDefine(defineName));
+                        }
+                        break;
                     default: throw newException($"Unhandled keyword {keyword}", Peek(-1));
                 }
             }
-            if (Current.Type == Token.ApeTail)
+            else if (Current.Type == Token.ApeTail)
             {
                 //macro expand!
                 ParseExpandMacro();
             }
-            if (Current.Type == Token.Embed || Current.Type == Token.XMLRaw)
+            else if (Current.Type == Token.Embed || Current.Type == Token.XMLRaw)
             {
                 if (Current.Value is null)
                     throw newException("Embed has no value!");
                 rawValues.Add((string)Current.Value);
                 finalText += $"{CurrentBuffer} = {CurrentBuffer} .. {RawValues}[{rawValues.Count()}]\n";
             }
-            ///switch (Current.Type)
-            ///{
-            ///    case Token.Bang:
-            ///        break;
-            ///    case Token.ApeTail:
-            ///        break;
-            ///    case Token.lPar:
-            ///        break;
-            ///    case Token.rPar:
-            ///        break;
-            ///    case Token.lBrace:
-            ///        break;
-            ///    case Token.rBrace:
-            ///        break;
-            ///    case Token.String:
-            ///        break;
-            ///    case Token.Embed:
-            ///        break;
-            ///    case Token.Comment:
-            ///        break;
-            ///    case Token.Keyword:
-            ///        break;
-            ///    case Token.Identifier:
-            ///        break;
-            ///    case Token.BadToken:
-            ///        break;
-            ///    case Token.EOF:
-            ///        break;
-            ///    default:
-            ///        break;
-            ///}
-            Position++;
+            else if (Current.Type == Token.XMLCodeLua)
+            {
+                if (Current.Value is null)
+                    throw newException("Lua has no value!");
+                finalText += (string)Current.Value;
+                Position++;
+            }
+            else if (Current.Type == Token.Comment)
+            {
+                Position++;
+            }
+            else if (Current.Type == Token.EOF)
+            {
+                break;
+            }
+            else
+            {
+                throw newException($"Unexpected token at start of expression! type: {Current.Type} text:{Current.Text}");
+            }
         }
         return finalText;
     }

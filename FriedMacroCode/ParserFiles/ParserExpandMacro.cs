@@ -4,12 +4,16 @@ namespace FriedMacroCode.ParserFiles;
 
 public partial class Parser
 {
+    private bool TryGetMacro(string name, out Macro? macro)
+    {
+        macro = Macros.FirstOrDefault(m => string.Equals(m.name, name, StringComparison.OrdinalIgnoreCase));
+        return (macro is not null);
+    }
     public void ParseExpandMacro()
     {
         Consume(Token.ApeTail);
         string defineName = GetIdentifier();
-        var macro = Macros.FirstOrDefault(m => string.Equals(m.name, defineName, StringComparison.OrdinalIgnoreCase));
-        if (macro is null)
+        if (!TryGetMacro(defineName, out Macro? macro))
             throw newException($"Macro with name {defineName} not found!", Peek(-1));
 
         List<string> arguments = new List<string>();
@@ -21,7 +25,7 @@ public partial class Parser
                 string arg = string.Empty;
                 if (Current.Type == Token.XMLRaw)
                 {
-                    arg = (string)(Current.Value ?? throw newException($"Macro argument value {macro.args[arguments.Count]} was empty"));
+                    arg = (string)(Current.Value ?? throw newException($"Macro argument value {macro!.args[arguments.Count]} was empty"));
                 }
                 else
                 {

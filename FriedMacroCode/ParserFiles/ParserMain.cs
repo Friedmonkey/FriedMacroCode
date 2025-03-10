@@ -74,6 +74,7 @@ public partial class Parser : AnalizerBase<FToken<Token>>
     public static List<string> Keywords = new List<string>()
     {
         "define",
+        "try_define",
         "include",
     };
 }

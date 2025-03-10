@@ -6,9 +6,8 @@ public partial class Parser
 {
     public record Macro(string name, List<string> args, FToken<Token> macroBody);
     List<Macro> Macros = new List<Macro>();
-    public void ParseDefine()
+    public Macro ParseDefine(string defineName)
     {
-        string defineName = GetIdentifier();
         List<string> parameters = new List<string>();
         FToken<Token> macroBody = new FToken<Token>(Token.BadToken);
 
@@ -38,7 +37,8 @@ public partial class Parser
         else
         {
             macroBody = Current;
+            Position++;
         }
-        Macros.Add(new Macro(defineName, parameters, macroBody));
+        return new Macro(defineName, parameters, macroBody);
     }
 }
