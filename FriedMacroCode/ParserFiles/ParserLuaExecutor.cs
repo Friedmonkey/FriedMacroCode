@@ -10,7 +10,7 @@ public partial class Parser
     const string Interop = "_luaInterop";
     public class LuaInterop
     {
-        public static void WriteFile(string path, string content)
+        public void WriteFile(string path, string content)
         {
             Console.WriteLine($"writing to file \"{path}\" with content:");
             Console.WriteLine(content);

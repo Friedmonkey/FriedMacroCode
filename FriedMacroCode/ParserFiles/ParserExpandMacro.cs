@@ -1,4 +1,5 @@
 ﻿using FriedLexer;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace FriedMacroCode.ParserFiles;
 
@@ -27,44 +28,81 @@ public partial class Parser
                 {
                     arg = (string)(Current.Value ?? throw newException($"Macro argument value {macro!.args[arguments.Count]} was empty"));
                 }
+                //else if (Current.Type == Token.XMLMacro)
+                //{
+                //    arg = (string)(Current.Value ?? throw newException($"Macro argument value {macro!.args[arguments.Count]} was empty"));
+                //    ParserOptions options = new ParserOptions()
+                //    {
+                //        Text = arg,
+                //        Origin = Current.Origin,
+                //        InternalMacroName = macro.name + " argument: " + macro!.args[arguments.Count],
+                //        ShowTokens = true,
+                //        Logger = this.logger
+                //    };
+                //    Parser parser = new Parser(options);
+                //    parser.Analizable.RemoveAt(parser.Analizable.Count - 1); //remove EOF token
+                //    this.Analizable.InsertRange(Position, parser.Analizable);
+
+                //}
                 else
                 {
                     arg = Current.Text;
                 }
                 Position++;
 
-                if (Current.Type != Token.rPar && Current.Type != Token.Comma)
-                    throw newException("Macro argument can only be a single token, wrap in raw if you need multiple <raw>token1 token2</raw>");
                 arguments.Add(arg);
                 if (Current.Type == Token.Comma) //it has multiple args
                 {
                     Consume(Token.Comma);
                 }
+                else if (Current.Type == Token.rPar)
+                {
+                    break;
+                }
+                else
+                { 
+                    throw newException("Macro argument can only be a single token, wrap in raw if you need multiple <raw>token1 token2</raw>");
+                }
             }
             Consume(Token.rPar);
         }
 
-        if (macro.macroBody.Type == Token.XMLMacro || macro.macroBody.Type == Token.XMLCodeLua)
+        string GetMacroBodyTextTemplated()
         {
             string text = (string)(macro.macroBody.Value ?? throw newException("Macro body had no value!", macro.macroBody));
             if (macro.args.Count != arguments.Count)
                 throw newException($"Macro count mismatch, macro {macro.name} expected {macro.args.Count} arguments but got {arguments.Count}");
-            
+
             for (int i = 0; i < arguments.Count; i++)
             {
                 string name = macro.args[i];
                 string value = arguments[i];
                 text = text.Replace(name, value);
             }
+            return text;
+        }
+        if (macro.macroBody.Type == Token.XMLMacro)
+        {
+            string text = GetMacroBodyTextTemplated();
             ParserOptions options = new ParserOptions()
             {
                 Text = text,
                 Origin = macro.macroBody.Origin,
+                InternalMacroName = macro.name,
                 ShowTokens = true,
                 Logger = this.logger
             };
             Parser parser = new Parser(options);
+            parser.Analizable.RemoveAt(parser.Analizable.Count - 1); //remove EOF token
             this.Analizable.InsertRange(Position, parser.Analizable);
+        }
+        else if (macro.macroBody.Type == Token.XMLCodeLua)
+        {
+            string text = GetMacroBodyTextTemplated();
+            var newbody = (macro.macroBody);
+            newbody.Value = text;
+
+            macro = macro with { macroBody = newbody };
         }
         else
         {

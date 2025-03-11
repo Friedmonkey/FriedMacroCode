@@ -21,7 +21,7 @@ public partial class Parser
                 string identifer = GetIdentifier();
                 Consume(Token.Percentage, error);
 
-                parameters.Add(identifer);
+                parameters.Add('%' + identifer+ '%');
                 if (Current.Type == Token.Comma) //it has multiple args
                 {
                     Consume(Token.Comma);

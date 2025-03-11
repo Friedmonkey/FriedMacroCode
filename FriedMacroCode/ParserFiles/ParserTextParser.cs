@@ -35,7 +35,6 @@ public partial class Parser
             }
             else if (Current.Type == Token.ApeTail)
             {
-                //macro expand!
                 ParseExpandMacro();
             }
             else if (Current.Type == Token.Embed || Current.Type == Token.XMLRaw)
@@ -44,6 +43,7 @@ public partial class Parser
                     throw newException("Embed has no value!");
                 rawValues.Add((string)Current.Value);
                 finalText += $"{CurrentBuffer} = {CurrentBuffer} .. {RawValues}[{rawValues.Count()}]\n";
+                Position++;
             }
             else if (Current.Type == Token.XMLCodeLua)
             {
@@ -62,7 +62,12 @@ public partial class Parser
             }
             else
             {
-                throw newException($"Unexpected token at start of expression! type: {Current.Type} text:{Current.Text}");
+                if (Current.Value is null)
+                    throw newException($"Unexpected token at start of expression! type: {Current.Type} text:{Current.Text}");
+
+                Console.WriteLine($"adding atom expression type:{Current.Type} with value: {Current.Value}");
+                finalText += (string)Current.Value;
+                Position++;
             }
         }
         return finalText;
@@ -71,12 +76,6 @@ public partial class Parser
     private string GetIdentifier() => StringValue(Token.Identifier);
     private string GetString() => StringValue(Token.String);
 
-    //{
-    //    var keyword = Consume(Token.Keyword);
-    //    if (keyword.Value is null)
-    //        throw new Exception("value of keyword was null?");
-    //    return ((string)keyword.Value).ToLower();
-    //}
     private string StringValue(Token type)
     {
         var token = Consume(type);

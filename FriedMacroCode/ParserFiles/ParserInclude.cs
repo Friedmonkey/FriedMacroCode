@@ -19,7 +19,9 @@ public partial class Parser
             Logger = this.logger
         };
         Parser parser = new Parser(options);
+        parser.Analizable.RemoveAt(parser.Analizable.Count - 1); //remove EOF token
         this.Analizable.InsertRange(Position, parser.Analizable);
         this.SetOrginContext(oldOrgin);
+        this.SetMacroContext(null);
     }
 }

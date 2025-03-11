@@ -6,6 +6,10 @@ namespace FriedMacroCode.ParserFiles;
 public partial class Parser : AnalizerBase<FToken<Token>>
 {
     private Ilogger? logger;
+    public void SetMacroContext(string? macroName)
+    { 
+        FToken<Token>.CurrentInternalMacroContext = macroName;
+    }
     public void SetOrginContext(string newOrgin)
     {
         var fullPath = Path.GetFullPath(newOrgin);
@@ -15,8 +19,13 @@ public partial class Parser : AnalizerBase<FToken<Token>>
     private static Dictionary<string, string[]> inputCache = new();
     public Parser(ParserOptions options) : base(new FToken<Token>(Token.EOF))
     {
+        SetMacroContext(options.InternalMacroName);
         SetOrginContext(options.Origin);
-        inputCache.Add(GetOrginContext(), options.Text.Split('\n').ToArray());
+        var origin = GetOrginContext();
+        if (options.InternalMacroName is not null)
+            origin += " on macro:"+options.InternalMacroName;
+        if (!inputCache.ContainsKey(origin))
+            inputCache.Add(origin, options.Text.Split('\n').ToArray());
 
         logger = options.Logger;
         FLexer<Token> tokenizer = new FLexer<Token>(options.Text, Token.BadToken, Token.EOF);
@@ -59,11 +68,12 @@ public partial class Parser : AnalizerBase<FToken<Token>>
             {
                 if (token.Type.Equals(Token.BadToken))
                 {
-                    Console.WriteLine($"bad token:	in file: \"{token.Origin,-3}\" on pos:{token.Position,-3} token:{token.Text,-20} with text:{token.Text,-25} with val:{token.Value ?? "Null",-25}");
+                    throw newException($"Bad token: text:{token.Text}", token);
+                    //Console.WriteLine($"bad token:	in file: \"{token.Origin,-3}\" on pos:{token.Position,-3} token:{token.Text,-20} with text:{token.Text,-25} with val:{token.Value ?? "Null",-25}");
                 }
                 else
                 {
-                    Console.WriteLine($"good token:	in file: \"{token.Origin,-3}\" on pos:{token.Position,-3} token:{token.Type.GetName(),-20} with text:{token.Text,-25} with val:{token.Value ?? "Null",-25}");
+                    //Console.WriteLine($"good token:	in file: \"{token.Origin,-3}\" on pos:{token.Position,-3} token:{token.Type.GetName(),-20} with text:{token.Text,-25} with val:{token.Value ?? "Null",-25}");
                 }
             }
             //Console.ReadLine();
