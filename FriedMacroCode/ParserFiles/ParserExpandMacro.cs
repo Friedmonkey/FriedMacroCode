@@ -102,7 +102,8 @@ public partial class Parser
             var newbody = (macro.macroBody);
             newbody.Value = text;
 
-            macro = macro with { macroBody = newbody };
+            this.Analizable.Insert(Position, newbody);
+            //macro = macro with { macroBody = newbody };
         }
         else
         {
