@@ -1,5 +1,5 @@
 ﻿using FriedMacroCode;
-using FriedMacroCode.ParserFiles;
+using FriedMacroCode.LooseParser;
 
 namespace FriedMacroCodeBuilder;
 
@@ -19,11 +19,17 @@ internal class Program
             throw new FileNotFoundException(filename);
 
         var text = File.ReadAllText(filename);
-        ParserOptions options = new ParserOptions() 
+        Directory.SetCurrentDirectory(Path.GetDirectoryName(filename));
+        //ParserOptions options = new ParserOptions() 
+        //{
+        //    Text = text,
+        //    Origin = filename,
+        //    ShowTokens = true,
+        //    Logger = null //not yet made
+        //};
+        ParserSettings options = new ParserSettings()
         {
             Text = text,
-            Origin = filename,
-            ShowTokens = true,
             Logger = null //not yet made
         };
         Parser parser = new Parser(options);
