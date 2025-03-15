@@ -1,4 +1,6 @@
-﻿namespace FriedMacroCode.LooseParser;
+﻿using System.Text;
+
+namespace FriedMacroCode.LooseParser;
 
 public partial class Parser
 {
@@ -33,6 +35,19 @@ public partial class Parser
         }
         return false;
     }
+    public bool FindStartAny(out string? found, params string[] find)
+    {
+        foreach (var findable in find)
+        {
+            if (FindStart(findable))
+            {
+                found = findable;
+                return true;
+            }
+        }
+        found = null;
+        return false;
+    }
     public char Consume(char chr)
     {
         if (Current == chr)
@@ -51,33 +66,43 @@ public partial class Parser
     }
     public string ConsumeUntil(char end)
     {
-        string output = string.Empty;
+        var output = new StringBuilder();
         while (Safe && Current != end)
         {
-            output += Current;
+            output.Append(Current);
             Position++;
         }
-        return output;
+        return output.ToString();
     }
+    //public string ConsumeUntil(string end)
+    //{
+    //    var output = new StringBuilder();
+    //    while (Safe && !Find(end))
+    //    {
+    //        output.Append(Current);
+    //        Position++;
+    //    }
+    //    return output.ToString();
+    //}
     public string ConsumeUntilEnter()
     {
-        string output = string.Empty;
+        var output = new StringBuilder();
         while (Safe && !Current.IsEnter())
         {
-            output += Current;
+            output.Append(Current);
             Position++;
         }
-        return output;
+        return output.ToString();
     }
     public string ConsumeUntilWhitespace()
     {
-        string output = string.Empty;
+        var output = new StringBuilder();
         while (Safe && !char.IsWhiteSpace(Current))
         {
-            output += Current;
+            output.Append(Current);
             Position++;
         }
-        return output;
+        return output.ToString();
     }
     private void ConsumeComment()
     {

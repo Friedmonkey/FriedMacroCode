@@ -13,6 +13,9 @@ public partial class Parser
             code = ParseIncludes();
             UpdateAnalizableAndResetIndex();
 
+            code = ParseMacros();
+            UpdateAnalizableAndResetIndex();
+
             Console.WriteLine(code);
         }
         catch
