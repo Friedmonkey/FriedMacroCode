@@ -18,9 +18,9 @@ public partial class Parser
 
             Console.WriteLine(code);
         }
-        catch
-        { 
-        
+        catch (Exception ex)
+        {
+            throw ex;
         }
         void UpdateAnalizableAndResetIndex()
         {
@@ -29,27 +29,4 @@ public partial class Parser
         }
         return code;
     }
-    //private string GetKeyword() => StringValue(Token.Keyword).ToLower();
-    //private string GetIdentifier() => StringValue(Token.Identifier);
-    //private string GetString() => StringValue(Token.String);
-
-    //private string StringValue(Token type)
-    //{
-    //    var token = Consume(type);
-    //    if (token.Value is null)
-    //        throw newException("value was null?", token);
-    //    return ((string)token.Value);
-    //}
-    //private FToken<Token> Consume(Token type, string extraInfo = "")
-    //{
-    //    if (Current.Type != type)
-    //    {
-    //        throw newException($"Expected a {type} but got {Current.Type} instead! "+extraInfo);
-    //    }
-    //    else
-    //    {
-    //        Position++;
-    //        return Peek(-1);
-    //    }
-    //}
 }

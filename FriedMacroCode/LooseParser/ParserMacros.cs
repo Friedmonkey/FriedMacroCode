@@ -6,7 +6,7 @@ namespace FriedMacroCode.LooseParser;
 
 public partial class Parser
 {
-    public record Macro(string name, List<string> args, string macroBody, bool doubleDefine = false);
+    public record Macro(string name, List<string> args, string macroBody);
     List<Macro> Macros = new List<Macro>();
     public string ParseMacros()
     {
@@ -51,12 +51,11 @@ public partial class Parser
                     {
                         if (Find(macro.name + '('))
                         {
-                            List<string> arguments = new List<string>();
-
-                            ParseMacroArguments(ref arguments, macro.doubleDefine);
+                            List<string> arguments = ParseMacroArguments();
 
                             logger?.LogDetail($"Expanding macro:{macro.name}");
                             ExpandMacro(macro, arguments);
+                            foundMacro = true;
                             break;
                         }
                     }
@@ -77,25 +76,38 @@ public partial class Parser
         return sb.ToString();
     }
 
-    private void ParseMacroArguments(ref List<string> arguments, bool doubleDefine)
+    private List<string> ParseMacroArguments()
     {
+        List<string> arguments = new List<string>();
         var argBuffer = new StringBuilder();
         while (Safe && Current != ')')
         {
             argBuffer.Clear();
-            while (Current != ',' && Current != ')')
+            if (Find($"<arg"))
             {
-                SkipWhitespace();
-                argBuffer.Append(Current);
-                Position++;
+                string num = ConsumeUntil('>');
+                Consume('>');
+                while (!Find($"</arg{num}>"))
+                {
+                    argBuffer.Append(Current);
+                    Position++;
+                }
             }
-            if (doubleDefine && Current == ',') throw new Exception("DoubleDefined macros does not support multiple arguments");
+            else
+            { 
+                while (Current != ',' && Current != ')')
+                {
+                    SkipWhitespace();
+                    argBuffer.Append(Current);
+                    Position++;
+                }
+            }
             arguments.Add(argBuffer.ToString());
             if (Current == ')') break;
             Consume(',');
         }
         Consume(')');
-        if (doubleDefine && Current == ')') Consume(')');
+        return arguments;
     }
 
     private void ExpandMacro(Macro macro, List<string> parameters)
@@ -123,7 +135,6 @@ public partial class Parser
         List<string> macroArgs = new List<string>();
         var macroName = new StringBuilder();
         var macroBody = new StringBuilder();
-        bool doubleDefine = false;
 
         //get Name
         while (Safe && !(Current == '(' || char.IsWhiteSpace(Current)))
@@ -137,13 +148,8 @@ public partial class Parser
         if (Current == '(')
         {
             Consume('(');
-            if (Current == '(')
-            {   //defined with double ( meaning we need double ( to pass arguments so we can pass arguments that contain ) without closing
-                Consume('(');
-                doubleDefine = true;
-            }
 
-            ParseMacroDefinitionArguments(ref macroArgs, doubleDefine);
+            ParseMacroDefinitionArguments(ref macroArgs);
 
             SkipWhitespaceAndComments();
 
@@ -169,16 +175,16 @@ public partial class Parser
                 macroBody.Append(ConsumeUntilEnter());
         }
 
-            //for (int i = 0; i < macroArgs.Count; i++) 
-            //{
-            //    string arg = macroArgs[i];
-            //    macroBody.Replace(arg, $"{{{i}}}");
-            //}
+        //for (int i = 0; i < macroArgs.Count; i++) 
+        //{
+        //    string arg = macroArgs[i];
+        //    macroBody.Replace(arg, $"{{{i}}}");
+        //}
 
-        return new Macro(macroName.ToString(), macroArgs, macroBody.ToString(), doubleDefine);
+        return new Macro(macroName.ToString(), macroArgs, macroBody.ToString());
     }
 
-    private void ParseMacroDefinitionArguments(ref List<string> macroArgs, bool doubleDefine)
+    private void ParseMacroDefinitionArguments(ref List<string> macroArgs)
     {
         var argBuffer = new StringBuilder();
         while (Safe && Current != ')')
@@ -192,14 +198,12 @@ public partial class Parser
             }
             string argument = argBuffer.ToString();
             if (string.IsNullOrWhiteSpace(argument))
-                throw new Exception("Macro definition failed, got empty argument!");
+                throw new Exception("Macro definition failed, got empty argument name!");
 
             macroArgs.Add(argument);
             if (Current == ')') break;
             Consume(',');
         }
         Consume(')');
-
-        if (Current == ')' && doubleDefine) Consume(')');
     }
 }
