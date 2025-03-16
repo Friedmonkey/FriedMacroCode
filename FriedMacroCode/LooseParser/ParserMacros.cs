@@ -1,12 +1,14 @@
 ﻿using FriedLexer;
+using NLua;
 using System.Runtime.CompilerServices;
 using System.Text;
+using static FriedMacroCode.ParserFiles.Parser;
 
 namespace FriedMacroCode.LooseParser;
 
 public partial class Parser
 {
-    public record Macro(string name, List<string> args, string macroBody);
+    public record Macro(string name, List<string> args, string macroBody, bool runtime = false);
     List<Macro> Macros = new List<Macro>();
     public string ParseMacros()
     {
@@ -15,9 +17,12 @@ public partial class Parser
 
         while (Safe) 
         {
-            if (FindStartAny(out string? keyword, "!define ", "!redefine ", "!trydefine ", "!ifdefine "))
+            if (FindStartAny(out string? keyword, "!define ", "!redefine ", "!trydefine ", "!ifdefine ", "!define_runtime "))
             {
                 var macro = ParseMacroDefinition();
+                if (keyword == "!define_runtime ")
+                    macro = macro with { runtime = true };
+
                 var existingMacro = Macros.FirstOrDefault(m => m.name == macro.name);
                 if (existingMacro is null)
                 {
@@ -82,6 +87,7 @@ public partial class Parser
         var argBuffer = new StringBuilder();
         while (Safe && Current != ')')
         {
+            SkipWhitespaceAndComments();
             argBuffer.Clear();
             if (Find($"<arg"))
             {
@@ -92,17 +98,29 @@ public partial class Parser
                     argBuffer.Append(Current);
                     Position++;
                 }
+                string argument = argBuffer.ToString();
+                if (num.StartsWith("Expand"))
+                {
+                    var oldAnalizable = this.Analizable.ToList();
+                    var oldPosition = this.Position;
+                    this.Position = 0;
+                    this.Analizable = argument.ToList();
+                    argument = ParseMacros();
+                    this.Analizable = oldAnalizable;
+                    this.Position = oldPosition;
+                }
+                arguments.Add(argument);
             }
             else
             { 
                 while (Current != ',' && Current != ')')
                 {
-                    SkipWhitespace();
+                    //SkipWhitespace();
                     argBuffer.Append(Current);
                     Position++;
                 }
+                arguments.Add(argBuffer.ToString());
             }
-            arguments.Add(argBuffer.ToString());
             if (Current == ')') break;
             Consume(',');
         }
@@ -119,11 +137,25 @@ public partial class Parser
             throw new ArgumentException($"Error on macro {macro.name}. Expected {definitionArgCount} arguments but got {parameterCount}");
 
         string expandedMacro = macro.macroBody;
-
-        for (int i = 0; i < macro.args.Count; i++) 
+        if (macro.runtime)
         {
-            string? arg = macro.args[i];
-            expandedMacro = expandedMacro.Replace(arg, parameters[i]);
+            using (Lua lua = GetLua())
+            {
+                for (int i = 0; i < macro.args.Count; i++)
+                {
+                    string? arg = macro.args[i];
+                    lua[arg] = parameters[i];
+                }
+                expandedMacro = ExecuteLuaOutput(lua, expandedMacro);
+            }
+        }
+        else
+        {
+            for (int i = 0; i < macro.args.Count; i++)
+            {
+                string? arg = macro.args[i];
+                expandedMacro = expandedMacro.Replace(arg, parameters[i]);
+            }
         }
 
         this.Analizable.InsertRange(Position, expandedMacro);

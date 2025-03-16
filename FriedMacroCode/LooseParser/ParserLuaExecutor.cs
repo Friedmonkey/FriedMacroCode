@@ -1,6 +1,8 @@
 ﻿using NLua;
+//using System.Text.Json;
+using Newtonsoft.Json;
 
-namespace FriedMacroCode.ParserFiles;
+namespace FriedMacroCode.LooseParser;
 
 public partial class Parser
 {
@@ -14,6 +16,10 @@ public partial class Parser
         {
             Console.WriteLine($"writing to file \"{path}\" with content:");
             Console.WriteLine(content);
+        }
+        public string Escape(string input)
+        {
+            return JsonConvert.ToString(input)![1..^1]; // Removes extra quotes
         }
     }
     public Lua GetLua()
@@ -47,7 +53,6 @@ public partial class Parser
             using (Lua lua = GetLua())
             {
                 lua[CurrentBuffer] = string.Empty;
-                //lua[CurrentFile] = string.Empty;
 
                 // Convert the C# List to a Lua table
                 lua.NewTable(RawValues);
@@ -71,6 +76,3 @@ public partial class Parser
         }
     }
 }
-
-
-

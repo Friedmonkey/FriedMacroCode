@@ -6,6 +6,6 @@ public partial class Parser
     {
         List<string> rawValues = new List<string>();
         var text = ParseText(ref rawValues);
-        return text;//RunLua(text, rawValues);
+        return RunLua(text, rawValues);
     }
 }
