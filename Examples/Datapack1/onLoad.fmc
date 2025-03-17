@@ -1,3 +1,5 @@
 @startFunc(onLoad)
-#say welcome to my pack
+<raw>
+	say welcome to my pack
+</raw>
 @endFunc()

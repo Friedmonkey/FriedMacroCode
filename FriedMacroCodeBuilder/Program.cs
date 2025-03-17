@@ -10,8 +10,16 @@ internal class Program
 #if DEBUG
         string filename = "../../../../Examples/Datapack1\\main.fmc";
 #else
-        Console.Write("Enter file name \n>");
-        string filename = Console.ReadLine();
+        string filename;
+        if (args.Count() > 0)
+        {
+            filename = args[0];
+        }
+        else 
+        {
+            Console.Write("Enter file name \n>");
+            filename = Console.ReadLine();
+        }
 #endif
         //string filename = args[0];
 

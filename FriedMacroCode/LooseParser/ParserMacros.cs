@@ -2,7 +2,6 @@
 using NLua;
 using System.Runtime.CompilerServices;
 using System.Text;
-using static FriedMacroCode.ParserFiles.Parser;
 
 namespace FriedMacroCode.LooseParser;
 

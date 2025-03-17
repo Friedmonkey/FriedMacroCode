@@ -35,6 +35,12 @@ local onLoads = {}
 	!endignore
 }}
 
+!define formatBufferJson()
+{{
+	!ignore
+	_currentBuffer = _luaInterop:FormatJson(_currentBuffer)
+	!endignore
+}}
 !define writeFile()
 {{
 	!ignore
@@ -50,6 +56,7 @@ local onLoads = {}
 !define endFunc() @writeFile()
 
 !trydefine packDescription A generated datapack
+!trydefine packFormat 61
 !define buildPack()
 {{
 	@startFile("pack.mcmeta")
@@ -57,10 +64,11 @@ local onLoads = {}
 		{
 		  "pack": {
 			"description": "@escapeStr(<argExpand>@packDescription()</argExpand>)",
-			"pack_format": 61
+			"pack_format": @packFormat()
 		  }
 		}
 	</rawdata>
+	@formatBufferJson()
 	@writeFile()
 	
 	@startFunc(load)

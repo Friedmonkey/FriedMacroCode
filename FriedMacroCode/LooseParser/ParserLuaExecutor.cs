@@ -6,7 +6,6 @@ namespace FriedMacroCode.LooseParser;
 
 public partial class Parser
 {
-    //const string CurrentFile = "_currentFile";
     const string CurrentBuffer = "_currentBuffer";
     const string RawValues = "_rawValues";
     const string Interop = "_luaInterop";
@@ -14,12 +13,19 @@ public partial class Parser
     {
         public void WriteFile(string path, string content)
         {
-            Console.WriteLine($"writing to file \"{path}\" with content:");
-            Console.WriteLine(content);
+            var dir = Path.GetDirectoryName(path);
+            if (!Directory.Exists(dir))
+                Directory.CreateDirectory(dir);
+            
+            File.WriteAllText(path, content);
         }
         public string Escape(string input)
         {
             return JsonConvert.ToString(input)![1..^1]; // Removes extra quotes
+        }
+        public string FormatJson(string uglyJson)
+        {
+            return JsonConvert.SerializeObject(JsonConvert.DeserializeObject(uglyJson), Formatting.Indented);
         }
     }
     public Lua GetLua()
