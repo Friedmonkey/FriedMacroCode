@@ -1,0 +1,3 @@
+@startFunc(onLoad)
+#say welcome to my pack
+@endFunc()

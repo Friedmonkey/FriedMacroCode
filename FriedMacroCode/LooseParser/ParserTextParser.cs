@@ -16,6 +16,9 @@ public partial class Parser
             code = ParseMacros();
             UpdateAnalizableAndResetIndex();
 
+            code = ParseOutput(ref rawValues);
+            UpdateAnalizableAndResetIndex();
+
             Console.WriteLine(code);
         }
         catch (Exception ex)

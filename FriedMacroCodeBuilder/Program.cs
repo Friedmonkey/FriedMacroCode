@@ -8,7 +8,7 @@ internal class Program
     static void Main(string[] args)
     {
 #if DEBUG
-        string filename = "datapack\\main.fmc";
+        string filename = "../../../../Examples/Datapack1\\main.fmc";
 #else
         Console.Write("Enter file name \n>");
         string filename = Console.ReadLine();

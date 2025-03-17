@@ -1,0 +1,16 @@
+!define datapack_name Cool minecraft datapack
+!define namespace CoolPack
+
+!define packDescription()
+{{
+Welcome to this totally cool datapack
+Made by none other than me!1!!1
+that is just "cool" isnt it?
+}}
+
+!include "MinecraftDatapack.fmc"
+
+!include "onLoad.fmc"
+
+@addLoad(onLoad)
+@buildPack()

@@ -1,0 +1,3 @@
+hello from onkill
+!include "b/onLoad.fmc"
+bye from onkill

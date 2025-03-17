@@ -1,0 +1,81 @@
+!trydefine datapack_name new datapack
+!trydefine namespace new_datapack
+!trydefine outputDir output
+
+!define_runtime escapeStr(text) return _luaInterop:Escape(text)
+
+!ignore
+local currentFile = "_none"
+local onTicks = {}
+local onLoads = {}
+!endignore
+
+!define addTickCustom(%command%)
+{{
+	!ignore
+	table.insert(onTicks, %command% .. "\n")
+	!endignore
+}}
+
+!define addLoadCustom(%command%)
+{{
+	!ignore
+	table.insert(onLoads, %command% .. "\n")
+	!endignore
+}}
+
+!define addTick(%name%) @addTickCustom(<arg>"function @namespace():%name%"</arg>)
+!define addLoad(%name%) @addLoadCustom(<arg>"function @namespace():%name%"</arg>)
+
+
+!define startFile(%name%)
+{{
+	!ignore
+	currentFile = "@outputDir()/@datapack_name()/" .. %name%
+	!endignore
+}}
+
+!define writeFile()
+{{
+	!ignore
+	if (currentFile ~= "_none") then
+		_luaInterop:WriteFile(currentFile, _currentBuffer)
+		_currentBuffer = ""
+	end
+	!endignore
+}}
+
+!define startFunc(%name%) @startFile(<arg>"data/@namespace()/function/%name%.mcfunction"</arg>)
+
+!define endFunc() @writeFile()
+
+!trydefine packDescription A generated datapack
+!define buildPack()
+{{
+	@startFile("pack.mcmeta")
+	<rawdata>
+		{
+		  "pack": {
+			"description": "@escapeStr(<argExpand>@packDescription()</argExpand>)",
+			"pack_format": 61
+		  }
+		}
+	</rawdata>
+	@writeFile()
+	
+	@startFunc(load)
+	!ignore
+	for i, v in ipairs(onLoads) do
+		_currentBuffer = _currentBuffer .. v
+	end
+	!endignore
+	@endFunc()
+	
+	@startFunc(tick)
+	!ignore
+	for i, v in ipairs(onTicks) do
+		_currentBuffer = _currentBuffer .. v
+	end
+	!endignore
+	@endFunc()
+}}
