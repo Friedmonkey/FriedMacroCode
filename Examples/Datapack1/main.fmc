@@ -8,9 +8,9 @@ Made by none other than me!1!!1
 that is just "cool" isnt it?
 }}
 
-!include "MinecraftDatapack.fmc"
+!include "../MinecraftDatapack.fmh/main.fmc"
 
-!include "onLoad.fmc"
-
-@addLoad(onLoad)
+!include "ticks.fmc"
 @buildPack()
+
+!include "functions.fmc"

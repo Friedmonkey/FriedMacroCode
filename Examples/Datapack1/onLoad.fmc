@@ -1,5 +1,0 @@
-@startFunc(onLoad)
-<raw>
-	say welcome to my pack
-</raw>
-@endFunc()

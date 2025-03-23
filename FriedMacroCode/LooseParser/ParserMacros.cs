@@ -98,7 +98,7 @@ public partial class Parser
                     Position++;
                 }
                 string argument = argBuffer.ToString();
-                if (num.StartsWith("Expand"))
+                if (num.Contains("Expand"))
                 {
                     var oldAnalizable = this.Analizable.ToList();
                     var oldPosition = this.Position;
@@ -107,6 +107,10 @@ public partial class Parser
                     argument = ParseMacros();
                     this.Analizable = oldAnalizable;
                     this.Position = oldPosition;
+                }
+                if (num.Contains("Trim"))
+                {
+                    argument = argument.Trim();
                 }
                 arguments.Add(argument);
             }

@@ -1,15 +1,3 @@
-!trydefine datapack_name new datapack
-!trydefine namespace new_datapack
-!trydefine outputDir output
-
-!define_runtime escapeStr(text) return _luaInterop:Escape(text)
-
-!ignore
-local currentFile = "_none"
-local onTicks = {}
-local onLoads = {}
-!endignore
-
 !define addTickCustom(%command%)
 {{
 	!ignore
@@ -27,36 +15,9 @@ local onLoads = {}
 !define addTick(%name%) @addTickCustom(<arg>"function @namespace():%name%"</arg>)
 !define addLoad(%name%) @addLoadCustom(<arg>"function @namespace():%name%"</arg>)
 
-
-!define startFile(%name%)
-{{
-	!ignore
-	currentFile = "@outputDir()/@datapack_name()/" .. %name%
-	!endignore
-}}
-
-!define formatBufferJson()
-{{
-	!ignore
-	_currentBuffer = _luaInterop:FormatJson(_currentBuffer)
-	!endignore
-}}
-!define writeFile()
-{{
-	!ignore
-	if (currentFile ~= "_none") then
-		_luaInterop:WriteFile(currentFile, _currentBuffer)
-		_currentBuffer = ""
-	end
-	!endignore
-}}
-
 !define startFunc(%name%) @startFile(<arg>"data/@namespace()/function/%name%.mcfunction"</arg>)
-
 !define endFunc() @writeFile()
 
-!trydefine packDescription A generated datapack
-!trydefine packFormat 61
 !define buildPack()
 {{
 	@startFile("pack.mcmeta")
