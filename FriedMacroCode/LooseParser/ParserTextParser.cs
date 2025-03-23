@@ -13,6 +13,9 @@ public partial class Parser
             code = ParseIncludes();
             UpdateAnalizableAndResetIndex();
 
+            if (includeOnly)
+                return code;
+
             code = ParseMacros();
             UpdateAnalizableAndResetIndex();
 

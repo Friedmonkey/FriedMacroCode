@@ -1,0 +1,2 @@
+!define outputDirectory output
+!include "source/CoolPack/main.fmc"

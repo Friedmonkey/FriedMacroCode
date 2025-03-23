@@ -13,6 +13,7 @@ public partial class Parser
     {
         public void WriteFile(string path, string content)
         {
+            path = Path.GetFullPath(path);
             var dir = Path.GetDirectoryName(path);
             if (!Directory.Exists(dir))
                 Directory.CreateDirectory(dir);
