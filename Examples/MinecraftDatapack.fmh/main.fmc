@@ -1,0 +1,17 @@
+!trydefine namespace new_datapack
+!trydefine datapack_name new datapack
+
+!trydefine outputDirectory output
+!define outputDir @outputDirectory()/@namespace()
+
+!trydefine packDescription A generated datapack
+!trydefine packFormat 61
+
+!include "../FileWriter.fmh"
+
+!define_runtime escapeStr(text) return _luaInterop:Escape(text)
+
+!include "setup.fmc"
+!include "mainFunctions.fmc"
+
+!include "functions.fmc"
