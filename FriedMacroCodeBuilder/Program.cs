@@ -11,7 +11,7 @@ internal class Program
         Console.WriteLine(string.Join(' ', args));
         ParserSettings options = new ParserSettings();
 #if DEBUG
-        string? filename = "../../../../Examples\\build.fmc";
+        string? filename = "../../../../Examples/DatapackTest/main.fmc";
 #else
         string? filename = null;
 
