@@ -1,0 +1,30 @@
+!trydefine outputDir output
+
+!ignore
+local currentFile = "_none"
+!endignore
+
+!define startFile(%name%)
+{{
+	!ignore
+	currentFile = "@outputDir()/" .. %name%
+	!endignore
+}}
+
+!define writeFile()
+{{
+	!ignore
+	if (currentFile ~= "_none") then
+		_luaInterop:WriteFile(currentFile, _currentBuffer)
+		_currentBuffer = ""
+		currentFile = "_none"
+	end
+	!endignore
+}}
+
+!define formatBufferJson()
+{{
+	!ignore
+	_currentBuffer = _luaInterop:FormatJson(_currentBuffer)
+	!endignore
+}}
