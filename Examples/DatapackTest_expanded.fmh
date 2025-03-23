@@ -1,0 +1,169 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+!ignore
+local currentFile = "_none"
+!endignore
+
+
+
+
+
+
+
+
+
+
+
+!ignore
+local onTicks = {}
+local onLoads = {}
+!endignore
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//execute as @e[type=minecraft:skeleton] run function @ namespace():allSkeletons
+
+////common parameters
+//!trydefine name 
+//!trydefine name
+//
+//!define mcSummon(%name%="")
+//{{
+//
+//}}
+
+
+
+
+
+
+	
+	!ignore
+	table.insert(onTicks, "execute as @e[type=minecraft:skeleton] at @s run function CoolPack:allSkeletons" .. "\n")
+	!endignore
+
+
+
+
+
+	
+	!ignore
+	currentFile = "output/CoolPack/" .. "pack.mcmeta"
+	!endignore
+
+	<rawdata>
+		{
+		  "pack": {
+			"description": "\r\nWelcome to this totally cool datapack\r\nMade by none other than me!1!!1\r\nthat is just \"cool\" isnt it?\r\n",
+			"pack_format": 61
+		  }
+		}
+	</rawdata>
+	
+	!ignore
+	_currentBuffer = _luaInterop:FormatJson(_currentBuffer)
+	!endignore
+
+	
+	!ignore
+	if (currentFile ~= "_none") then
+		_luaInterop:WriteFile(currentFile, _currentBuffer)
+		_currentBuffer = ""
+		currentFile = "_none"
+	end
+	!endignore
+
+	
+	
+	!ignore
+	currentFile = "output/CoolPack/" .. "data/CoolPack/function/load.mcfunction"
+	!endignore
+
+	!ignore
+	for i, v in ipairs(onLoads) do
+		_currentBuffer = _currentBuffer .. v
+	end
+	!endignore
+	
+	!ignore
+	if (currentFile ~= "_none") then
+		_luaInterop:WriteFile(currentFile, _currentBuffer)
+		_currentBuffer = ""
+		currentFile = "_none"
+	end
+	!endignore
+
+	
+	
+	!ignore
+	currentFile = "output/CoolPack/" .. "data/CoolPack/function/tick.mcfunction"
+	!endignore
+
+	!ignore
+	for i, v in ipairs(onTicks) do
+		_currentBuffer = _currentBuffer .. v
+	end
+	!endignore
+	
+	!ignore
+	if (currentFile ~= "_none") then
+		_luaInterop:WriteFile(currentFile, _currentBuffer)
+		_currentBuffer = ""
+		currentFile = "_none"
+	end
+	!endignore
+
+
+
+
+	!ignore
+	currentFile = "output/CoolPack/" .. "data/CoolPack/function/allSkeletons.mcfunction"
+	!endignore
+
+#say hello world!
+
+	!ignore
+	if (currentFile ~= "_none") then
+		_luaInterop:WriteFile(currentFile, _currentBuffer)
+		_currentBuffer = ""
+		currentFile = "_none"
+	end
+	!endignore
+
+
+
+
+
+

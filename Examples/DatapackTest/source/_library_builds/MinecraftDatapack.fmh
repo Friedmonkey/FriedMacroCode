@@ -1,0 +1,123 @@
+
+!trydefine namespace new_datapack
+!trydefine datapack_name new datapack
+
+!trydefine outputDirectory output
+!define outputDir @outputDirectory()/@namespace()
+
+!trydefine packDescription A generated datapack
+!trydefine packFormat 61
+
+!trydefine outputDir output
+
+!ignore
+local currentFile = "_none"
+!endignore
+
+!define startFile(%name%)
+{{
+	!ignore
+	currentFile = "@outputDir()/" .. %name%
+	!endignore
+}}
+
+!define writeFile()
+{{
+	!ignore
+	if (currentFile ~= "_none") then
+		_luaInterop:WriteFile(currentFile, _currentBuffer)
+		_currentBuffer = ""
+		currentFile = "_none"
+	end
+	!endignore
+}}
+
+!define formatBufferJson()
+{{
+	!ignore
+	_currentBuffer = _luaInterop:FormatJson(_currentBuffer)
+	!endignore
+}}
+
+
+
+!define_runtime escapeStr(text) return _luaInterop:Escape(text)
+
+!ignore
+local onTicks = {}
+local onLoads = {}
+!endignore
+
+
+!define addTickCustom(%command%)
+{{
+	!ignore
+	table.insert(onTicks, %command% .. "\n")
+	!endignore
+}}
+
+!define addLoadCustom(%command%)
+{{
+	!ignore
+	table.insert(onLoads, %command% .. "\n")
+	!endignore
+}}
+
+!define addTick(%name%) @addTickCustom(<arg>"function @namespace():%name%"</arg>)
+!define addLoad(%name%) @addLoadCustom(<arg>"function @namespace():%name%"</arg>)
+
+!define startFunc(%name%) @startFile(<arg>"data/@namespace()/function/%name%.mcfunction"</arg>)
+!define endFunc() @writeFile()
+
+!define buildPack()
+{{
+	@startFile("pack.mcmeta")
+	<rawdata>
+		{
+		  "pack": {
+			"description": "@escapeStr(<argExpand>@packDescription()</argExpand>)",
+			"pack_format": @packFormat()
+		  }
+		}
+	</rawdata>
+	@formatBufferJson()
+	@writeFile()
+	
+	@startFunc(load)
+	!ignore
+	for i, v in ipairs(onLoads) do
+		_currentBuffer = _currentBuffer .. v
+	end
+	!endignore
+	@endFunc()
+	
+	@startFunc(tick)
+	!ignore
+	for i, v in ipairs(onTicks) do
+		_currentBuffer = _currentBuffer .. v
+	end
+	!endignore
+	@endFunc()
+}}
+
+
+
+!define mcExecuteFuncAs(%selector%, %name%) 
+{{
+	@addTickCustom(<argTrim>
+	"execute as %selector% at @s run function @namespace():%name%"
+	</argTrim>)
+}}
+
+//execute as @e[type=minecraft:skeleton] run function @ namespace():allSkeletons
+
+////common parameters
+//!trydefine name 
+//!trydefine name
+//
+//!define mcSummon(%name%="")
+//{{
+//
+//}}
+
+

@@ -6,7 +6,7 @@ public partial class Parser
     {
         List<string> rawValues = new List<string>();
         var text = ParseText(ref rawValues);
-        if (includeOnly)
+        if (includeOnly || expandMacros)
         { 
             Path.GetDirectoryName(text);
             File.WriteAllText(compileOutput ?? throw new Exception("No compile name specified!"), text);

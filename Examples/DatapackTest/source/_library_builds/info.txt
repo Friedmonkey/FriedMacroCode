@@ -1,0 +1,16 @@
+these are just library versions of the source files
+
+i plan to make it so
+
+!include <someLibrary>
+
+will try to find like
+
+someLibrary.fmh
+someLibrary/main.fmc
+../someLibrary.fmh
+../someLibrary/main.fmc
+%appdata%/fmc_libraries/someLibrary.fmh
+%appdata%/fmc_libraries/someLibrary/main.fmc
+
+libraries are just projects but the includes are parsed meaning it can fit into a nice single file, maby ill add other stuff later

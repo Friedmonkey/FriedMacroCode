@@ -57,6 +57,13 @@ public partial class Parser
         }
         throw this.context.ExpectedException(Current, chr);
     }
+    private string ConsumeTag()
+    {
+        Consume('<');
+        string str = ConsumeUntil('>');
+        Consume('>');
+        return str;
+    }
     private string ConsumeString()
     {
         Consume('"');

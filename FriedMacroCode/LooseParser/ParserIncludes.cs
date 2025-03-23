@@ -16,7 +16,9 @@ public partial class Parser
         {
             if (FindStart("!include "))
             {
-                string filename = ConsumeString();
+                bool isLibray = (Current == '<');
+                string filename = isLibray ? ConsumeTag() : ConsumeString();
+
                 if (!File.Exists(filename))
                     throw new FileNotFoundException($"Trying to include file: \"{filename}\" but the file cannot be found!");
                 filename = Path.GetFullPath(filename);

@@ -19,6 +19,9 @@ public partial class Parser
             code = ParseMacros();
             UpdateAnalizableAndResetIndex();
 
+            if (expandMacros)
+                return code;
+
             code = ParseOutput(ref rawValues);
             UpdateAnalizableAndResetIndex();
 

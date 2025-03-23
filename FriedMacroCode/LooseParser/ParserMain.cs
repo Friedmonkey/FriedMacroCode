@@ -7,11 +7,13 @@ public partial class Parser : AnalizerBase<char>
     private Ilogger? logger;
     private ParseContext context;
     private bool includeOnly;
+    private bool expandMacros;
     private string? compileOutput;
 
     public Parser(ParserSettings settings) : base('\0')
     {
         this.includeOnly = settings.IncludeOnly;
+        this.expandMacros = settings.ExpandMacros;
         this.compileOutput = settings.CompileOutput;
 
         this.logger = settings.Logger;

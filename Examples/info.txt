@@ -1,0 +1,15 @@
+DatapackTest.fmh is just library version e.g. just the includes included
+
+see DatapackTest/source/_library_builds for more info
+
+DatapackTest_expanded.fmh
+
+is just the macros expanded
+
+
+these 2 files were made to test out the library compiling feature 
+
+-compile or -c to compile the includes to make a library
+
+-macro or -m
+to include files and expand macros of that file

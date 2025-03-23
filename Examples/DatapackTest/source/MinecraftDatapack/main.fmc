@@ -7,7 +7,7 @@
 !trydefine packDescription A generated datapack
 !trydefine packFormat 61
 
-!include "../FileWriter.fmh"
+!include <../FileWriter.fmh>
 
 !define_runtime escapeStr(text) return _luaInterop:Escape(text)
 

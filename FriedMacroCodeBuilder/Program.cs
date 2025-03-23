@@ -8,44 +8,48 @@ internal class Program
 {
     static void Main(string[] args)
     {
-#if DEBUG
-  //      string filename = "../../../../Examples\\build.fmc";
-//#else
-        string? filename = null;
+        Console.WriteLine(string.Join(' ', args));
         ParserSettings options = new ParserSettings();
+#if DEBUG
+        string? filename = "../../../../Examples\\build.fmc";
+#else
+        string? filename = null;
 
-        if (args.Count() == 1)
-            filename = args[0];
-        else if (args.Count() > 1)
+        List<string> newArgs = args.ToList();
+        while (newArgs.Count() > 0)
         {
-            List<string> newArgs = args.ToList();
-            while (args.Count() > 0)
+            string type = newArgs.First().ToLower();
+            switch (type)
             {
-                string type = newArgs.First().ToLower();
-                switch (type)
-                {
-                    case "-file":
-                    case "-f":
-                        filename = getValue();
-                        break;
+                case "-file":
+                case "-f":
+                    filename = getValue();
+                    break;
 
-                    case "-compile":
-                    case "-c":
-                        options.IncludeOnly = true;
-                        break;
+                case "-compile":
+                case "-c":
+                    options.IncludeOnly = true;
+                    break;
 
-                    case "-compilename":
-                    case "-cname":
-                    case "-cn":
-                        options.CompileOutput = getValue();
-                        options.IncludeOnly = true;
-                        break;
+                case "-macros":
+                case "-macro":
+                case "-m":
+                    options.ExpandMacros = true;
+                    break;
 
-                }
-                newArgs = newArgs.Skip(2).ToList();
-                string getValue() => newArgs.Skip(1).FirstOrDefault() ?? throw new Exception("Expected a value after "+type);
+                case "-output":
+                case "-o":
+                    options.CompileOutput = getValue();
+                    break;
+                default:
+                    filename = newArgs.FirstOrDefault();
+                    break;
+
             }
+            newArgs = newArgs.Skip(2).ToList();
+            string getValue() => newArgs.Skip(1).FirstOrDefault() ?? throw new Exception("Expected a value after "+type);
         }
+        
 
 #endif
         if (string.IsNullOrEmpty(filename))
@@ -67,7 +71,12 @@ internal class Program
 
         if (options.IncludeOnly && string.IsNullOrEmpty(options.CompileOutput))
         {
-            options.CompileOutput = dirName;
+            options.CompileOutput = dirName + ".fmh";
+        }
+        else if (options.ExpandMacros)
+        {
+            string ext = Path.GetExtension(filename);
+            options.CompileOutput = filename.Substring(0, filename.Length - ext.Length)+"_expanded"+ext;
         }
 
         options.Text = text;
