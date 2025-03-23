@@ -1,0 +1,17 @@
+!define mcExecuteFuncAs(%selector%, %name%) 
+{{
+	@addTickCustom(<argTrim>
+	"execute as %selector% at @s run function @namespace():%name%"
+	</argTrim>)
+}}
+
+//execute as @e[type=minecraft:skeleton] run function @ namespace():allSkeletons
+
+////common parameters
+//!trydefine name 
+//!trydefine name
+//
+//!define mcSummon(%name%="")
+//{{
+//
+//}}

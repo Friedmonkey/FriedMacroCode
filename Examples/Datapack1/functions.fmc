@@ -1,0 +1,3 @@
+@startFunc(allSkeletons)
+#say hello world!
+@endFunc()

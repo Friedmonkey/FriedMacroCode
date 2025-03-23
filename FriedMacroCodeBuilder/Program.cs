@@ -1,5 +1,5 @@
 ﻿using FriedMacroCode;
-using FriedMacroCode.ParserFiles;
+using FriedMacroCode.LooseParser;
 
 namespace FriedMacroCodeBuilder;
 
@@ -8,10 +8,18 @@ internal class Program
     static void Main(string[] args)
     {
 #if DEBUG
-        string filename = "datapack\\main.fmc";
+        string filename = "../../../../Examples/Datapack1\\main.fmc";
 #else
-        Console.Write("Enter file name \n>");
-        string filename = Console.ReadLine();
+        string filename;
+        if (args.Count() > 0)
+        {
+            filename = args[0];
+        }
+        else 
+        {
+            Console.Write("Enter file name \n>");
+            filename = Console.ReadLine();
+        }
 #endif
         //string filename = args[0];
 
@@ -19,11 +27,17 @@ internal class Program
             throw new FileNotFoundException(filename);
 
         var text = File.ReadAllText(filename);
-        ParserOptions options = new ParserOptions() 
+        Directory.SetCurrentDirectory(Path.GetDirectoryName(filename));
+        //ParserOptions options = new ParserOptions() 
+        //{
+        //    Text = text,
+        //    Origin = filename,
+        //    ShowTokens = true,
+        //    Logger = null //not yet made
+        //};
+        ParserSettings options = new ParserSettings()
         {
             Text = text,
-            Origin = filename,
-            ShowTokens = true,
             Logger = null //not yet made
         };
         Parser parser = new Parser(options);

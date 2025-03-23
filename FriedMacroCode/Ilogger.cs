@@ -10,12 +10,15 @@ public enum LogType
 }
 public interface Ilogger
 {
-    void LogInfo(string message);
-    void LogWarning(string message);
-    void LogError(string message);
-    void LogDetail(string message);
-
+    void AddLog(LogType type, string message);
 
     void FilterLogs(LogType filter);
     void ClearLogs();
+
+
+    //log any of the types
+    void LogDetail(string message) => AddLog(LogType.Detail, message);
+    void LogInfo(string message) => AddLog(LogType.Info, message);
+    void LogWarning(string message) => AddLog(LogType.Warning, message);
+    void LogError(string message) => AddLog(LogType.Error, message);
 }

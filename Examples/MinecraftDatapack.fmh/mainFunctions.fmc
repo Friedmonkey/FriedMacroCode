@@ -1,0 +1,50 @@
+!define addTickCustom(%command%)
+{{
+	!ignore
+	table.insert(onTicks, %command% .. "\n")
+	!endignore
+}}
+
+!define addLoadCustom(%command%)
+{{
+	!ignore
+	table.insert(onLoads, %command% .. "\n")
+	!endignore
+}}
+
+!define addTick(%name%) @addTickCustom(<arg>"function @namespace():%name%"</arg>)
+!define addLoad(%name%) @addLoadCustom(<arg>"function @namespace():%name%"</arg>)
+
+!define startFunc(%name%) @startFile(<arg>"data/@namespace()/function/%name%.mcfunction"</arg>)
+!define endFunc() @writeFile()
+
+!define buildPack()
+{{
+	@startFile("pack.mcmeta")
+	<rawdata>
+		{
+		  "pack": {
+			"description": "@escapeStr(<argExpand>@packDescription()</argExpand>)",
+			"pack_format": @packFormat()
+		  }
+		}
+	</rawdata>
+	@formatBufferJson()
+	@writeFile()
+	
+	@startFunc(load)
+	!ignore
+	for i, v in ipairs(onLoads) do
+		_currentBuffer = _currentBuffer .. v
+	end
+	!endignore
+	@endFunc()
+	
+	@startFunc(tick)
+	!ignore
+	for i, v in ipairs(onTicks) do
+		_currentBuffer = _currentBuffer .. v
+	end
+	!endignore
+	@endFunc()
+}}

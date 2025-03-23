@@ -1,4 +1,4 @@
-﻿namespace FriedMacroCode.ParserFiles;
+﻿namespace FriedMacroCode.LooseParser;
 
 public partial class Parser
 {
